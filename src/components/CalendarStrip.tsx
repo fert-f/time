@@ -17,7 +17,7 @@ export const CalendarStrip: React.FC = () => {
   const baseDate = React.useMemo(() => {
     const d = new Date();
     // Noon avoids crossing 00:00 or 02:00 (DST shift) when adding/subtracting days!
-    d.setHours(12, 0, 0, 0); 
+    d.setHours(12, 0, 0, 0);
     return d;
   }, []);
 
@@ -45,7 +45,7 @@ export const CalendarStrip: React.FC = () => {
 
   return (
     <div style={{ width: '100%', position: 'relative', overflow: 'hidden', padding: '1rem 0', marginBottom: '2rem' }}>
-      
+
       {/* Center Indicator */}
       <div style={{
         position: 'absolute',
@@ -82,10 +82,10 @@ export const CalendarStrip: React.FC = () => {
             // Safely reconstruct the actual Date object based on our frozen noon-based "day 0"
             const d = new Date(baseDate.getTime());
             d.setDate(baseDate.getDate() + targetDayIndex);
-            
+
             return (
-              <div 
-                key={targetDayIndex} 
+              <div
+                key={targetDayIndex}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -95,7 +95,7 @@ export const CalendarStrip: React.FC = () => {
                   display: 'flex',
                   flexDirection: 'column',
                   // Bold Day Separator on the left
-                  borderLeft: '4px solid rgba(255, 255, 255, 0.9)', 
+                  borderLeft: '4px solid rgba(255, 255, 255, 0.9)',
                   boxShadow: '-4px 0 10px rgba(0,0,0,0.1)'
                 }}
               >
@@ -105,9 +105,9 @@ export const CalendarStrip: React.FC = () => {
                 </div>
 
                 {/* 24-hour continuous gradient block */}
-                <div style={{ 
-                  display: 'flex', 
-                  flex: 1, 
+                <div style={{
+                  display: 'flex',
+                  flex: 1,
                   // 0:00 (Night), 6:00 (Morning), 12:00 (Day), 18:00 (Evening), 24:00 (Night)
                   background: 'linear-gradient(to right, #0f172a 0%, #38bdf8 25%, #fde047 50%, #c084fc 75%, #0f172a 100%)',
                   position: 'relative'
@@ -133,12 +133,12 @@ export const CalendarStrip: React.FC = () => {
                   <div style={{ position: 'absolute', top: 0, bottom: 0, left: '25%', borderLeft: '1px dashed rgba(255,255,255,0.3)', pointerEvents: 'none' }} />
                   <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', borderLeft: '1px dashed rgba(255,255,255,0.4)', pointerEvents: 'none' }} />
                   <div style={{ position: 'absolute', top: 0, bottom: 0, left: '75%', borderLeft: '1px dashed rgba(255,255,255,0.3)', pointerEvents: 'none' }} />
-                
+
                   {/* Routine Event Markers */}
                   {dailyRoutine.map((event) => {
                     const eventMinutes = event.hour * 60 + event.minute;
                     const positionPercent = (eventMinutes / 1440) * 100;
-                    
+
                     return (
                       <div key={event.id} style={{
                         position: 'absolute',
@@ -153,7 +153,7 @@ export const CalendarStrip: React.FC = () => {
                       }}>
                         {/* Connecting line */}
                         <div style={{ width: '2px', height: '100px', backgroundColor: 'rgba(255,255,255,0.2)', position: 'absolute', zIndex: -1 }} />
-                        
+
                         {/* Floating Icon Base */}
                         <div style={{
                           backgroundColor: '#fff',
@@ -170,7 +170,7 @@ export const CalendarStrip: React.FC = () => {
                         }} title={`${event.hour.toString().padStart(2, '0')}:${event.minute.toString().padStart(2, '0')} - ${language === 'ru' ? event.labelRu : event.labelEn}`}>
                           {event.emoji}
                         </div>
-                        
+
                         {/* Time Text below icon */}
                         <div style={{
                           backgroundColor: 'rgba(0,0,0,0.6)',

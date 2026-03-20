@@ -13,7 +13,7 @@ interface TimeContextType {
   isTestMode: boolean;
   testModeStep: TestModeStep;
   language: 'ru' | 'en';
-  
+
   addMinutes: (delta: number) => void;
   resetToNow: () => void;
   toggle24Hour: () => void;
@@ -26,10 +26,10 @@ const TimeContext = createContext<TimeContextType | undefined>(undefined);
 
 export const TimeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const initDate = new Date();
-  
+
   // Single continuous state representing all time traveled.
   const [absoluteMinutes, setAbsoluteMinutes] = useState(initDate.getHours() * 60 + initDate.getMinutes());
-  
+
   const [is24Hour, setIs24Hour] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
   const [testModeStep, setTestModeStep] = useState<TestModeStep>('hidden');
@@ -38,10 +38,10 @@ export const TimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Derive everything strictly from this single source of truth
   const totalMinutes = ((absoluteMinutes % 1440) + 1440) % 1440;
   const dayOffset = Math.floor(absoluteMinutes / 1440);
-  
+
   let current24Hour = Math.floor(totalMinutes / 60);
   let minutes = Math.round(totalMinutes % 60);
-  
+
   // Fix edge case where rounding pushes 59.6 minutes to 60
   if (minutes === 60) {
     minutes = 0;
@@ -116,6 +116,7 @@ export const TimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTime = () => {
   const context = useContext(TimeContext);
   if (!context) {

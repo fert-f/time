@@ -11,7 +11,7 @@ function App() {
       <h1 style={{ color: 'var(--primary-color)', fontSize: '2.5rem', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
         Interactive Time App
       </h1>
-      
+
       <CalendarStrip />
 
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '3rem', width: '100%', alignItems: 'center' }}>
@@ -19,7 +19,7 @@ function App() {
           <AnalogClock />
           <TimeText />
         </div>
-        
+
         <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
           <DigitalPanel />
           <CurrentEvent />

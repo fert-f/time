@@ -4,7 +4,7 @@ import { useTime } from '../context/TimeContext';
 export const AnalogClock: React.FC = () => {
   const { totalMinutes, dayOffset, addMinutes, isTestMode, testModeStep } = useTime();
   const clockRef = useRef<HTMLDivElement>(null);
-  
+
   const [draggingHand, setDraggingHand] = useState<'hour' | 'minute' | null>(null);
   const [lastAngle, setLastAngle] = useState<number | null>(null);
 
@@ -40,13 +40,13 @@ export const AnalogClock: React.FC = () => {
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!draggingHand || !interactive || lastAngle === null) return;
     const newAngle = calculateAngleFromEvent(e.clientX, e.clientY);
-    
+
     let deltaAngle = newAngle - lastAngle;
 
     // Handle wrap around across 12 o'clock (0/360 boundary)
     if (deltaAngle < -180) deltaAngle += 360;
     else if (deltaAngle > 180) deltaAngle -= 360;
-    
+
     // Only update if there is significant movement to avoid jitter
     if (Math.abs(deltaAngle) > 0.1) {
       if (draggingHand === 'minute') {
@@ -76,7 +76,7 @@ export const AnalogClock: React.FC = () => {
   };
 
   const currentMins = ((totalMinutes % 1440) + 1440) % 1440; // 0 to 1439
-  
+
   // Night (00:00) -> Sunrise (06:00) -> Day (12:00) -> Sunset (18:00) -> Night (24:00)
   const skyStops = [
     { time: 0, topSt: [15, 23, 42], botSt: [30, 41, 59] },          // Deep Night
@@ -105,26 +105,26 @@ export const AnalogClock: React.FC = () => {
 
   // Dynamically switch ticks/text color based on brightness
   // If it's pure day, we need dark text. If it's night, we need light text.
-  const isNightPhase = currentMins < 300 || currentMins > 1140; 
+  const isNightPhase = currentMins < 300 || currentMins > 1140;
   const clockTicks = isNightPhase ? '#64748b' : 'var(--text-dark)';
   const clockNumbers = isNightPhase ? '#f8fafc' : 'var(--text-dark)';
 
   return (
     <div className="glass-panel" style={{ width: '320px', height: '320px', borderRadius: '50%', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto', transition: 'box-shadow 0.3s' }}>
-      <div 
+      <div
         ref={clockRef}
-        style={{ 
-          width: '300px', height: '300px', borderRadius: '50%', 
+        style={{
+          width: '300px', height: '300px', borderRadius: '50%',
           background: clockFaceGradient,
-          border: '6px solid var(--clock-border)', position: 'relative', 
-          boxShadow: isNightPhase ? 'inset 0 10px 15px rgba(0,0,0,0.5)' : 'inset 0 4px 6px rgba(0,0,0,0.05), var(--shadow-md)', 
+          border: '6px solid var(--clock-border)', position: 'relative',
+          boxShadow: isNightPhase ? 'inset 0 10px 15px rgba(0,0,0,0.5)' : 'inset 0 4px 6px rgba(0,0,0,0.05), var(--shadow-md)',
           touchAction: 'none',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           transition: 'box-shadow 0.8s ease'
         }}
       >
-        
+
         {/* Center Dot */}
         <div style={{ position: 'absolute', top: '50%', left: '50%', width: '16px', height: '16px', borderRadius: '50%', backgroundColor: clockTicks, transform: 'translate(-50%, -50%)', zIndex: 10, pointerEvents: 'none', transition: 'background-color 0.8s ease' }} />
 
@@ -134,10 +134,10 @@ export const AnalogClock: React.FC = () => {
             position: 'absolute', top: 0, left: '50%', width: '4px', height: '100%', transform: `translateX(-50%) rotate(${i * 30}deg)`, pointerEvents: 'none'
           }}>
             <div style={{ width: '4px', height: '16px', backgroundColor: clockTicks, marginTop: '6px', borderRadius: '2px', transition: 'background-color 0.8s ease' }} />
-            <div style={{ 
-              position: 'absolute', 
-              top: '28px', 
-              left: '50%', 
+            <div style={{
+              position: 'absolute',
+              top: '28px',
+              left: '50%',
               transform: `translateX(-50%) rotate(-${i * 30}deg)`,
               fontWeight: '800',
               fontSize: '1.2rem',

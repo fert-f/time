@@ -6,19 +6,19 @@
   --bg-gradient: radial-gradient(circle at 10% 20%, rgb(239, 246, 255) 0%, rgb(219, 234, 254) 90%);
   --clock-face: #ffffff;
   --clock-border: #e0f2fe;
-  
+
   --primary-color: #3b82f6;      /* Blue */
   --secondary-color: #f43f5e;    /* Rose/Red */
   --accent-color: #10b981;       /* Emerald */
   --accent-yellow: #f59e0b;      /* Yellow/Orange */
-  
+
   --text-dark: #1e293b;
   --text-light: #64748b;
-  
+
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  
+
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.5);
   --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
@@ -31,7 +31,7 @@
   color: var(--text-dark);
   background-color: var(--bg-color);
   background-image: var(--bg-gradient);
-  
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

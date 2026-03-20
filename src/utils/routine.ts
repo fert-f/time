@@ -19,9 +19,9 @@ export const dailyRoutine: RoutineEvent[] = [
 
 export const getCurrentRoutineEvent = (currentHours: number, currentMinutes: number): RoutineEvent => {
   const currentTotal = currentHours * 60 + currentMinutes;
-  
+
   let currentEvent = dailyRoutine[dailyRoutine.length - 1]; // default to last event if before first
-  
+
   for (let i = 0; i < dailyRoutine.length; i++) {
     const eventTime = dailyRoutine[i].hour * 60 + dailyRoutine[i].minute;
     if (currentTotal >= eventTime) {
@@ -30,6 +30,6 @@ export const getCurrentRoutineEvent = (currentHours: number, currentMinutes: num
       break;
     }
   }
-  
+
   return currentEvent;
 };

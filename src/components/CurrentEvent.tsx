@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const CurrentEvent: React.FC = () => {
   const { hours, minutes, isPM, language } = useTime();
-  
+
   // Calculate 24-hour exact format for the routine check
   let h24 = hours;
   if (isPM && hours !== 12) h24 += 12;
@@ -28,7 +28,7 @@ export const CurrentEvent: React.FC = () => {
           </motion.div>
         </AnimatePresence>
       </div>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-light)', letterSpacing: '0.05em' }}>
           {language === 'ru' ? 'СЕЙЧАС ПО РАСПИСАНИЮ' : 'CURRENTLY SCHEDULED'}

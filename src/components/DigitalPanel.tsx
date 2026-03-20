@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const DigitalPanel: React.FC = () => {
   const { hours, minutes, isPM, is24Hour, isTestMode, testModeStep } = useTime();
-  
+
   const isHidden = isTestMode && testModeStep === 'hidden';
 
   return (

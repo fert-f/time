@@ -4,10 +4,10 @@ export const formatTimeDigital = (hours: number, minutes: number, isPM: boolean,
     if (isPM && hours !== 12) displayHours += 12;
     else if (!isPM && hours === 12) displayHours = 0;
   }
-  
+
   const paddedHours = displayHours.toString().padStart(2, '0');
   const paddedMinutes = minutes.toString().padStart(2, '0');
-  
+
   return `${paddedHours}:${paddedMinutes}`;
 };
 
@@ -35,7 +35,7 @@ const getEnNumberStr = (n: number): string => {
 
 const englishTimeText = (hours: number, minutes: number) => {
   if (minutes === 0) return `${numToWordsEn[hours]} o'clock`;
-  
+
   // Use relative terms only for multiples of 5
   if (minutes % 5 === 0) {
     const getMinWord = (m: number) => {
@@ -45,7 +45,7 @@ const englishTimeText = (hours: number, minutes: number) => {
     if (minutes === 15) return `quarter past ${numToWordsEn[hours]}`;
     if (minutes === 30) return `half past ${numToWordsEn[hours]}`;
     if (minutes === 45) return `quarter to ${numToWordsEn[(hours % 12) + 1]}`;
-    
+
     if (minutes < 30) {
       return `${getMinWord(minutes)} past ${numToWordsEn[hours]}`;
     } else {
@@ -73,11 +73,11 @@ const getRuNumberStr = (n: number, isHour: boolean = false): string => {
   const t = Math.floor(n / 10);
   const u = n % 10;
   if (u === 0) return ruTens[t];
-  
+
   let unitStr = numToWordsRuNom[u];
   if (!isHour && u === 1) unitStr = "одна";
   if (!isHour && u === 2) unitStr = "две";
-  
+
   return `${ruTens[t]} ${unitStr}`;
 };
 
@@ -86,10 +86,10 @@ const russianTimeText = (hours: number, minutes: number) => {
     if (hours === 1) return "ровно час";
     return `ровно ${numToWordsRuNom[hours]}`;
   }
-  
+
   // Use relative terms only for multiples of 5
   if (minutes % 5 === 0) {
-    let nextHourIndex = (hours % 12) + 1;
+    const nextHourIndex = (hours % 12) + 1;
     const nextHourGenitive = numToWordsRuGenitive[nextHourIndex];
 
     if (minutes === 15) return `четверть ${nextHourGenitive}`;
@@ -108,7 +108,7 @@ const russianTimeText = (hours: number, minutes: number) => {
       else if (diff === 10) bezWord = "без десяти";
       else if (diff === 20) bezWord = "без двадцати";
       else if (diff === 25) bezWord = "без двадцати пяти";
-      
+
       return `${bezWord} ${numToWordsRuNom[nextHourIndex]}`;
     }
   }

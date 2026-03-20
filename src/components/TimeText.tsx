@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export const TimeText: React.FC = () => {
   const { hours, minutes, language, isTestMode, testModeStep } = useTime();
-  
+
   const text = getTimeText(hours, minutes, language);
   const isHidden = isTestMode && testModeStep === 'hidden';
 

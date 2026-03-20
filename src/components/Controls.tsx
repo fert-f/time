@@ -34,11 +34,11 @@ export const Controls: React.FC = () => {
 
         {isTestMode && (
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <button 
+            <button
               onClick={handleTestModeAction}
               style={{ padding: '0.8rem 2rem', fontSize: '1.2rem', backgroundColor: '#fff', color: 'var(--primary-color)', border: 'none', width: '100%', fontWeight: 800 }}
             >
-              {testModeStep === 'hidden' 
+              {testModeStep === 'hidden'
                 ? (language === 'ru' ? 'Показать время' : 'Show Time')
                 : (language === 'ru' ? 'Следующее время' : 'Next Time')
               }
