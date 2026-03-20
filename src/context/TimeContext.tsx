@@ -33,7 +33,7 @@ export const TimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [is24Hour, setIs24Hour] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
   const [testModeStep, setTestModeStep] = useState<TestModeStep>('hidden');
-  const [language, setLanguage] = useState<'ru' | 'en'>('ru');
+  const [language, setLanguage] = useState<'ru' | 'en'>('en');
 
   // Derive everything strictly from this single source of truth
   const totalMinutes = ((absoluteMinutes % 1440) + 1440) % 1440;
