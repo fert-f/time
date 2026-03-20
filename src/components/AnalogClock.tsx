@@ -110,11 +110,11 @@ export const AnalogClock: React.FC = () => {
   const clockNumbers = isNightPhase ? '#f8fafc' : 'var(--text-dark)';
 
   return (
-    <div className="glass-panel" style={{ width: '320px', height: '320px', borderRadius: '50%', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '2rem auto', transition: 'box-shadow 0.3s' }}>
+    <div className="glass-panel" style={{ width: '280px', height: '280px', borderRadius: '50%', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0.5rem auto', transition: 'box-shadow 0.3s' }}>
       <div
         ref={clockRef}
         style={{
-          width: '300px', height: '300px', borderRadius: '50%',
+          width: '260px', height: '260px', borderRadius: '50%',
           background: clockFaceGradient,
           border: '6px solid var(--clock-border)', position: 'relative',
           boxShadow: isNightPhase ? 'inset 0 10px 15px rgba(0,0,0,0.5)' : 'inset 0 4px 6px rgba(0,0,0,0.05), var(--shadow-md)',

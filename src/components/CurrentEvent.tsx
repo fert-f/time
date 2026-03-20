@@ -14,8 +14,8 @@ export const CurrentEvent: React.FC = () => {
   const currentEvent = getCurrentRoutineEvent(h24, minutes);
 
   return (
-    <div className="glass-panel" style={{ padding: '1.2rem', minWidth: '220px', width: '100%', maxWidth: '400px', minHeight: '120px', display: 'flex', alignItems: 'center', gap: '1rem', backgroundColor: `${currentEvent.color}15`, border: `2px solid ${currentEvent.color}50` }}>
-      <div style={{ fontSize: '3rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))', minWidth: '60px', textAlign: 'center' }}>
+    <div className="glass-panel" style={{ padding: '0.8rem 1rem', minWidth: '220px', width: '100%', maxWidth: '400px', minHeight: '80px', display: 'flex', alignItems: 'center', gap: '0.8rem', backgroundColor: `${currentEvent.color}15`, border: `2px solid ${currentEvent.color}50`, marginBottom: '0' }}>
+      <div style={{ fontSize: '2.5rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))', minWidth: '50px', textAlign: 'center' }}>
         <AnimatePresence mode="popLayout">
           <motion.div
             key={currentEvent.id}
@@ -30,7 +30,7 @@ export const CurrentEvent: React.FC = () => {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-light)', letterSpacing: '0.05em' }}>
+        <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-light)', letterSpacing: '0.05em' }}>
           {language === 'ru' ? 'СЕЙЧАС ПО РАСПИСАНИЮ' : 'CURRENTLY SCHEDULED'}
         </span>
         <AnimatePresence mode="popLayout">
@@ -39,7 +39,7 @@ export const CurrentEvent: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            style={{ fontSize: '1.4rem', fontWeight: 800, color: currentEvent.color, lineHeight: 1.2, marginTop: '0.2rem' }}
+            style={{ fontSize: '1.2rem', fontWeight: 800, color: currentEvent.color, lineHeight: 1.2, marginTop: '0.2rem' }}
           >
             {language === 'ru' ? currentEvent.labelRu : currentEvent.labelEn}
           </motion.div>
