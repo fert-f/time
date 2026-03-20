@@ -1,0 +1,43 @@
+import React from 'react';
+import { useTime } from '../context/TimeContext';
+import { formatTimeDigital } from '../utils/formatters';
+import { motion, AnimatePresence } from 'framer-motion';
+
+export const DigitalPanel: React.FC = () => {
+  const { hours, minutes, isPM, is24Hour, isTestMode, testModeStep } = useTime();
+  
+  const isHidden = isTestMode && testModeStep === 'hidden';
+
+  return (
+    <div className="glass-panel" style={{ padding: '1.5rem 3rem', minWidth: '220px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px', overflow: 'hidden' }}>
+      <AnimatePresence mode="wait">
+        {isHidden ? (
+          <motion.div
+            key="hidden"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text-light)', userSelect: 'none' }}
+          >
+            ??:??
+          </motion.div>
+        ) : (
+          <motion.div
+            key="revealed"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1 }}
+            style={{ fontSize: '4.5rem', fontWeight: 800, color: 'var(--primary-color)', lineHeight: 1, letterSpacing: '-0.02em' }}
+          >
+            {formatTimeDigital(hours, minutes, isPM, is24Hour)}
+            {!is24Hour && (
+              <span style={{ fontSize: '1.5rem', marginLeft: '0.5rem', color: 'var(--text-light)', fontWeight: 600 }}>
+                {isPM ? 'PM' : 'AM'}
+              </span>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
