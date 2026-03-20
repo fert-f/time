@@ -12,9 +12,12 @@ export const dailyRoutine: RoutineEvent[] = [
   { id: '1', hour: 7, minute: 0, labelRu: 'Завтрак', labelEn: 'Breakfast', emoji: '🥞', color: '#f59e0b' },
   { id: '2', hour: 8, minute: 0, labelRu: 'Школа', labelEn: 'School', emoji: '🎒', color: '#3b82f6' },
   { id: '3', hour: 14, minute: 10, labelRu: 'Домой', labelEn: 'Go Home', emoji: '🏠', color: '#10b981' },
-  { id: '4', hour: 17, minute: 30, labelRu: 'Ужин', labelEn: 'Dinner', emoji: '🍲', color: '#f97316' },
-  { id: '5', hour: 19, minute: 45, labelRu: 'Подготовка ко сну', labelEn: 'Get ready for bed', emoji: '🛁', color: '#8b5cf6' },
-  { id: '6', hour: 21, minute: 0, labelRu: 'Сон', labelEn: 'Sleep', emoji: '🌙', color: '#1e3a8a' }
+  { id: '4', hour: 15, minute: 0, labelRu: 'Свободное время', labelEn: 'Free time', emoji: '🧩', color: '#06b6d4' },
+  { id: '5', hour: 17, minute: 30, labelRu: 'Ужин', labelEn: 'Dinner', emoji: '🍲', color: '#f97316' },
+  { id: '6', hour: 18, minute: 0, labelRu: 'Домашнее задание', labelEn: 'Homework', emoji: '📚', color: '#a855f7' },
+  { id: '7', hour: 19, minute: 0, labelRu: 'Время для игр', labelEn: 'Game time', emoji: '🎲', color: '#ec4899' },
+  { id: '8', hour: 19, minute: 45, labelRu: 'Подготовка ко сну', labelEn: 'Get ready for bed', emoji: '🛁', color: '#8b5cf6' },
+  { id: '9', hour: 21, minute: 0, labelRu: 'Сон', labelEn: 'Sleep', emoji: '🌙', color: '#1e3a8a' }
 ];
 
 export const getCurrentRoutineEvent = (currentHours: number, currentMinutes: number): RoutineEvent => {
