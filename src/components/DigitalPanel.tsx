@@ -19,12 +19,12 @@ export const DigitalPanel: React.FC = () => {
       className="glass-panel"
       onClick={handlePanelClick}
       style={{
-        padding: '0.5rem 1.5rem',
+        padding: 'var(--panel-pad-digital)',
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '80px',
+        height: 'var(--height-digital)',
         overflow: 'hidden',
         marginBottom: '0',
         cursor: isTestMode ? 'pointer' : 'default',
@@ -47,11 +47,11 @@ export const DigitalPanel: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.1 }}
-            style={{ fontSize: '3.5rem', fontWeight: 800, color: 'var(--primary-color)', lineHeight: 1, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}
+            style={{ fontSize: 'var(--font-digital)', fontWeight: 800, color: 'var(--primary-color)', lineHeight: 1, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}
           >
             {formatTimeDigital(hours, minutes, isPM, is24Hour)}
             {!is24Hour && (
-              <span style={{ fontSize: '1.2rem', marginLeft: '0.3rem', color: 'var(--text-light)', fontWeight: 600 }}>
+              <span style={{ fontSize: 'calc(var(--font-digital) * 0.35)', marginLeft: '0.3rem', color: 'var(--text-light)', fontWeight: 600 }}>
                 {isPM ? 'PM' : 'AM'}
               </span>
             )}

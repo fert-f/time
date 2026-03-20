@@ -44,7 +44,7 @@ export const CalendarStrip: React.FC = () => {
   const shiftX = absoluteTotalMinutes * (DAY_WIDTH / 1440);
 
   return (
-    <div style={{ width: '100%', position: 'relative', overflow: 'hidden', padding: '1rem 0', marginBottom: '2rem' }}>
+    <div style={{ width: '100%', position: 'relative', overflow: 'hidden', padding: 'var(--cal-pad-y) 0', marginBottom: 'var(--cal-margin-bot)' }}>
 
       {/* Center Indicator */}
       <div style={{
@@ -66,7 +66,7 @@ export const CalendarStrip: React.FC = () => {
 
       <div style={{
         position: 'relative',
-        height: '100px',
+        height: 'var(--cal-height)',
         width: '100%',
       }}>
         {/* The sliding track */}

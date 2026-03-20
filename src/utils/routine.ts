@@ -17,7 +17,7 @@ export const dailyRoutine: RoutineEvent[] = [
   { id: '6', hour: 18, minute: 0, labelRu: 'Домашнее задание', labelEn: 'Homework', emoji: '📚', color: '#a855f7' },
   { id: '7', hour: 19, minute: 0, labelRu: 'Время для игр', labelEn: 'Game time', emoji: '🎲', color: '#ec4899' },
   { id: '8', hour: 19, minute: 45, labelRu: 'Подготовка ко сну', labelEn: 'Get ready for bed', emoji: '🛁', color: '#8b5cf6' },
-  { id: '9', hour: 21, minute: 0, labelRu: 'Сон', labelEn: 'Sleep', emoji: '🌙', color: '#1e3a8a' }
+  { id: '9', hour: 20, minute: 45, labelRu: 'Сон', labelEn: 'Sleep', emoji: '🌙', color: '#1e3a8a' }
 ];
 
 export const getCurrentRoutineEvent = (currentHours: number, currentMinutes: number): RoutineEvent => {

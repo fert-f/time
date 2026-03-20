@@ -1,17 +1,56 @@
 import React, { useRef, useState } from 'react';
 import { useTime } from '../context/TimeContext';
 
+const describeArc = (x: number, y: number, innerRadius: number, outerRadius: number, startAngle: number, endAngle: number) => {
+  const startAngleRad = (startAngle - 90) * Math.PI / 180;
+  const endAngleRad = (endAngle - 90) * Math.PI / 180;
+
+  const startOuterX = x + outerRadius * Math.cos(startAngleRad);
+  const startOuterY = y + outerRadius * Math.sin(startAngleRad);
+  const endOuterX = x + outerRadius * Math.cos(endAngleRad);
+  const endOuterY = y + outerRadius * Math.sin(endAngleRad);
+
+  const startInnerX = x + innerRadius * Math.cos(startAngleRad);
+  const startInnerY = y + innerRadius * Math.sin(startAngleRad);
+  const endInnerX = x + innerRadius * Math.cos(endAngleRad);
+  const endInnerY = y + innerRadius * Math.sin(endAngleRad);
+
+  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+  return [
+    "M", startOuterX, startOuterY,
+    "A", outerRadius, outerRadius, 0, largeArcFlag, 1, endOuterX, endOuterY,
+    "L", endInnerX, endInnerY,
+    "A", innerRadius, innerRadius, 0, largeArcFlag, 0, startInnerX, startInnerY,
+    "Z"
+  ].join(" ");
+};
+
+const hourColors: Record<number, string> = {
+  1: '#F4511E', // Orange
+  2: '#FB8C00', // Yellow-Orange
+  3: '#FFB300', // Yellow
+  4: '#7CB342', // Light Green
+  5: '#43A047', // Green
+  6: '#00897B', // Teal
+  7: '#1E88E5', // Blue
+  8: '#3949AB', // Dark Blue
+  9: '#5E35B1', // Purple
+  10: '#8E24AA', // Plum
+  11: '#D81B60', // Pink
+  12: '#E53935'  // Red
+};
+
 export const AnalogClock: React.FC = () => {
   const { totalMinutes, dayOffset, addMinutes, isTestMode, testModeStep } = useTime();
-  const clockRef = useRef<HTMLDivElement>(null);
+  const clockRef = useRef<SVGSVGElement>(null);
 
   const [draggingHand, setDraggingHand] = useState<'hour' | 'minute' | null>(null);
   const [lastAngle, setLastAngle] = useState<number | null>(null);
 
-  // Use absolute continuous minutes including day offset so angles increase infinitely without snapping back
   const absoluteContinuousMinutes = dayOffset * 1440 + totalMinutes;
   const minuteAngle = absoluteContinuousMinutes * 6;
-  const hourAngle = absoluteContinuousMinutes * 0.5; // (absoluteContinuousMinutes / 60) * 30
+  const hourAngle = absoluteContinuousMinutes * 0.5;
 
   const interactive = !isTestMode || testModeStep === 'revealed';
 
@@ -43,18 +82,13 @@ export const AnalogClock: React.FC = () => {
 
     let deltaAngle = newAngle - lastAngle;
 
-    // Handle wrap around across 12 o'clock (0/360 boundary)
     if (deltaAngle < -180) deltaAngle += 360;
     else if (deltaAngle > 180) deltaAngle -= 360;
 
-    // Only update if there is significant movement to avoid jitter
     if (Math.abs(deltaAngle) > 0.1) {
       if (draggingHand === 'minute') {
-        // 6 degrees roughly equals 1 minute
         addMinutes(deltaAngle / 6);
       } else if (draggingHand === 'hour') {
-        // 30 degrees roughly equals 1 hour (60 minutes)
-        // 1 degree = 2 minutes
         addMinutes(deltaAngle * 2);
       }
       setLastAngle(newAngle);
@@ -67,135 +101,153 @@ export const AnalogClock: React.FC = () => {
     e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
-  const interpolateColor = (color1: number[], color2: number[], factor: number) => {
-    return [
-      Math.round(color1[0] + factor * (color2[0] - color1[0])),
-      Math.round(color1[1] + factor * (color2[1] - color1[1])),
-      Math.round(color1[2] + factor * (color2[2] - color1[2]))
-    ];
-  };
-
-  const currentMins = ((totalMinutes % 1440) + 1440) % 1440; // 0 to 1439
-
-  // Night (00:00) -> Sunrise (06:00) -> Day (12:00) -> Sunset (18:00) -> Night (24:00)
-  const skyStops = [
-    { time: 0, topSt: [15, 23, 42], botSt: [30, 41, 59] },          // Deep Night
-    { time: 360, topSt: [56, 189, 248], botSt: [251, 146, 60] },    // Sunrise
-    { time: 720, topSt: [14, 165, 233], botSt: [186, 230, 253] },   // Noon
-    { time: 1080, topSt: [15, 23, 42], botSt: [192, 132, 252] },    // Sunset
-    { time: 1440, topSt: [15, 23, 42], botSt: [30, 41, 59] },       // Deep Night
-  ];
-
-  let s = skyStops[0];
-  let e = skyStops[4];
-  for (let i = 0; i < skyStops.length - 1; i++) {
-    if (currentMins >= skyStops[i].time && currentMins <= skyStops[i+1].time) {
-      s = skyStops[i];
-      e = skyStops[i+1];
-      break;
-    }
-  }
-
-  const factor = (currentMins - s.time) / (e.time - s.time);
-  const topColor = interpolateColor(s.topSt, e.topSt, factor);
-  const botColor = interpolateColor(s.botSt, e.botSt, factor);
-
-  // Gradient with 30% opacity requested by user
-  const clockFaceGradient = `linear-gradient(to bottom, rgba(${topColor[0]}, ${topColor[1]}, ${topColor[2]}, 0.3), rgba(${botColor[0]}, ${botColor[1]}, ${botColor[2]}, 0.3))`;
-
-  // Dynamically switch ticks/text color based on brightness
-  // If it's pure day, we need dark text. If it's night, we need light text.
-  const isNightPhase = currentMins < 300 || currentMins > 1140;
-  const clockTicks = isNightPhase ? '#64748b' : 'var(--text-dark)';
-  const clockNumbers = isNightPhase ? '#f8fafc' : 'var(--text-dark)';
-
   return (
-    <div className="glass-panel" style={{ width: '280px', height: '280px', borderRadius: '50%', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0.5rem auto', transition: 'box-shadow 0.3s' }}>
-      <div
+    <div style={{ width: '100%', maxWidth: '380px', margin: '0.5rem auto', display: 'flex', justifyContent: 'center' }}>
+      <svg
         ref={clockRef}
-        style={{
-          width: '260px', height: '260px', borderRadius: '50%',
-          background: clockFaceGradient,
-          border: '6px solid var(--clock-border)', position: 'relative',
-          boxShadow: isNightPhase ? 'inset 0 10px 15px rgba(0,0,0,0.5)' : 'inset 0 4px 6px rgba(0,0,0,0.05), var(--shadow-md)',
-          touchAction: 'none',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          transition: 'box-shadow 0.8s ease'
-        }}
+        viewBox="0 0 320 320"
+        style={{ width: '100%', height: 'auto', touchAction: 'none', fontFamily: 'system-ui, -apple-system, sans-serif' }}
       >
+        <defs>
+          <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+            <feDropShadow dx="0" dy="4" stdDeviation="4" floodOpacity="0.15" />
+          </filter>
+        </defs>
 
-        {/* Center Dot */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', width: '16px', height: '16px', borderRadius: '50%', backgroundColor: clockTicks, transform: 'translate(-50%, -50%)', zIndex: 10, pointerEvents: 'none', transition: 'background-color 0.8s ease' }} />
+        {/* Outer Wooden Frame */}
+        <circle cx="160" cy="160" r="156" fill="#E8C396" stroke="#C49A6C" strokeWidth="4" filter="url(#shadow)" />
+        <circle cx="160" cy="160" r="148" fill="#FFFFFF" />
 
-        {/* Hour Marks */}
-        {[...Array(12)].map((_, i) => (
-          <div key={`h-${i}`} style={{
-            position: 'absolute', top: 0, left: '50%', width: '4px', height: '100%', transform: `translateX(-50%) rotate(${i * 30}deg)`, pointerEvents: 'none'
-          }}>
-            <div style={{ width: '4px', height: '16px', backgroundColor: clockTicks, marginTop: '6px', borderRadius: '2px', transition: 'background-color 0.8s ease' }} />
-            <div style={{
-              position: 'absolute',
-              top: '28px',
-              left: '50%',
-              transform: `translateX(-50%) rotate(-${i * 30}deg)`,
-              fontWeight: '800',
-              fontSize: '1.2rem',
-              color: clockNumbers,
-              transition: 'color 0.8s ease'
-            }}>
-              {i === 0 ? 12 : i}
-            </div>
-          </div>
-        ))}
+        {/* Minute Track */}
+        {[...Array(60)].map((_, i) => {
+          const isFive = i % 5 === 0;
+          const hourIndex = i === 0 ? 12 : i / 5;
+          const bgColor = isFive ? hourColors[hourIndex] : '#FFFFFF';
+          const textColor = isFive ? '#FFFFFF' : '#333333';
+          const startAngle = i * 6 - 3;
+          const endAngle = i * 6 + 3;
 
-        {/* Minute Marks */}
-        {[...Array(60)].map((_, i) => (
-          i % 5 !== 0 && (
-            <div key={`m-${i}`} style={{
-              position: 'absolute', top: 0, left: '50%', width: '2px', height: '100%', transform: `translateX(-50%) rotate(${i * 6}deg)`, pointerEvents: 'none'
-            }}>
-              <div style={{ width: '2px', height: '6px', backgroundColor: isNightPhase ? '#475569' : '#cbd5e1', marginTop: '6px', transition: 'background-color 0.8s ease' }} />
-            </div>
-          )
-        ))}
+          const angleRad = (i * 6 - 90) * Math.PI / 180;
+          // Radius placing the text cleanly in the track
+          const textRadius = 139;
+          const textX = 160 + textRadius * Math.cos(angleRad);
+          const textY = 160 + textRadius * Math.sin(angleRad);
 
-        {/* Hour Hand Container */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', transform: `rotate(${hourAngle}deg)`, transition: draggingHand === 'hour' ? 'none' : 'transform 0.1s linear', pointerEvents: 'none' }}>
-          <div
-            onPointerDown={handlePointerDown('hour')}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-            style={{
-              position: 'absolute', top: '15%', left: '50%', width: '40px', height: '50%', transform: 'translateX(-50%)', cursor: interactive ? 'grab' : 'default', zIndex: 8, touchAction: 'none', pointerEvents: 'auto'
-            }}
+          return (
+            <g key={`min-${i}`}>
+              <path
+                d={describeArc(160, 160, 130, 148, startAngle, endAngle)}
+                fill={bgColor}
+                stroke="#E2E8F0"
+                strokeWidth="0.5"
+              />
+              <text
+                x={textX}
+                y={textY}
+                fill={textColor}
+                fontSize="8"
+                fontWeight={isFive ? "800" : "500"}
+                textAnchor="middle"
+                alignmentBaseline="central"
+                style={{ userSelect: 'none' }}
+              >
+                {i}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Inner Arcs removed as requested */}
+
+        {/* Center dot under hands */}
+        <circle cx="160" cy="160" r="16" fill="#F1F5F9" />
+
+        {/* Hour Circles and Numbers */}
+        {[...Array(12)].map((_, i) => {
+          const hour = i === 0 ? 12 : i;
+          const angleRad = (hour * 30 - 90) * Math.PI / 180;
+          const radius = 100;
+          const cx = 160 + radius * Math.cos(angleRad);
+          const cy = 160 + radius * Math.sin(angleRad);
+
+          return (
+            <g key={`hour-${hour}`}>
+              <circle cx={cx} cy={cy} r="18" fill={hourColors[hour]} opacity="0.3" />
+              <text
+                x={cx}
+                y={cy}
+                fill={hourColors[hour]}
+                fontSize="22"
+                fontWeight="800"
+                textAnchor="middle"
+                alignmentBaseline="central"
+                dy="1"
+              >
+                {hour}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Minute Hand */}
+        <g
+          transform={`rotate(${minuteAngle} 160 160)`}
+          style={{ transition: draggingHand === 'minute' ? 'none' : 'transform 0.1s linear', cursor: interactive ? 'grab' : 'default' }}
+          onPointerDown={handlePointerDown('minute')}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
+          {/* Hitbox */}
+          <rect x="145" y="30" width="30" height="150" fill="transparent" />
+          <path d="M 156 40 L 164 40 L 164 160 L 156 160 Z" fill="#1E88E5" rx="4" />
+          <circle cx="160" cy="160" r="10" fill="#1E88E5" />
+          <text
+            x="205"
+            y="160"
+            fill="#FFFFFF"
+            fontSize="8"
+            fontWeight="bold"
+            letterSpacing="2"
+            textAnchor="middle"
+            alignmentBaseline="central"
+            transform="rotate(-90 160 160)"
           >
-            {/* The visible hand */}
-            <div style={{
-              position: 'absolute', bottom: '35%', left: '50%', width: '16px', height: '50%', backgroundColor: 'var(--secondary-color)', transformOrigin: 'bottom center', borderRadius: '8px', transform: 'translateX(-50%)', boxShadow: 'var(--shadow-md)', pointerEvents: 'none'
-            }} />
-          </div>
-        </div>
+            MINUTE
+          </text>
+        </g>
 
-        {/* Minute Hand Container */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', transform: `rotate(${minuteAngle}deg)`, transition: draggingHand === 'minute' ? 'none' : 'transform 0.1s linear', pointerEvents: 'none' }}>
-          <div
-            onPointerDown={handlePointerDown('minute')}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-            style={{
-              position: 'absolute', top: '0%', left: '50%', width: '40px', height: '65%', transform: 'translateX(-50%)', cursor: interactive ? 'grab' : 'default', zIndex: 9, touchAction: 'none', pointerEvents: 'auto'
-            }}
+        {/* Hour Hand */}
+        <g
+          transform={`rotate(${hourAngle} 160 160)`}
+          style={{ transition: draggingHand === 'hour' ? 'none' : 'transform 0.1s linear', cursor: interactive ? 'grab' : 'default' }}
+          onPointerDown={handlePointerDown('hour')}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
+          {/* Hitbox */}
+          <rect x="145" y="70" width="30" height="110" fill="transparent" />
+          <path d="M 152 80 L 168 80 L 168 160 L 152 160 Z" fill="#E53935" rx="6" />
+          <text
+            x="200"
+            y="160"
+            fill="#FFFFFF"
+            fontSize="10"
+            fontWeight="bold"
+            letterSpacing="2"
+            textAnchor="middle"
+            alignmentBaseline="central"
+            transform="rotate(-90 160 160)"
           >
-             {/* The visible hand */}
-             <div style={{
-              position: 'absolute', bottom: '23%', left: '50%', width: '12px', height: '65%', backgroundColor: 'var(--primary-color)', transformOrigin: 'bottom center', borderRadius: '6px', transform: 'translateX(-50%)', boxShadow: 'var(--shadow-md)', pointerEvents: 'none'
-            }} />
-          </div>
-        </div>
-      </div>
+            HOUR
+          </text>
+        </g>
+
+        {/* Center Pin */}
+        <circle cx="160" cy="160" r="4" fill="#FFCA28" />
+        <circle cx="160" cy="160" r="2" fill="#FFFFFF" />
+      </svg>
     </div>
   );
 };
